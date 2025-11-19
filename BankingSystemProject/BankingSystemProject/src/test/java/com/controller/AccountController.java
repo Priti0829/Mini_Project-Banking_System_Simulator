@@ -11,7 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-
+import java.util.Map;
+import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -92,10 +93,10 @@ class AccountControllerTest {
     void testDeleteAccount() {
         doNothing().when(accountService).deleteAccount("ACC1234");
 
-        ResponseEntity<Void> response = accountController.deleteAccount("ACC1234");
+        ResponseEntity<Map<String, String>> response = accountController.deleteAccount("ACC1234");
 
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertEquals(null, response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Account has been deleted successfully", response.getBody().get("message"));
     }
 
     // -------------------- DEPOSIT --------------------

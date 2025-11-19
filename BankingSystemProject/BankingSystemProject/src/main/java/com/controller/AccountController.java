@@ -2,10 +2,12 @@ package com.controller;
 
 import com.bean.dto.*;
 import com.service.AccountService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -20,10 +22,11 @@ public class AccountController {
 
     // -------------------- CREATE ACCOUNT --------------------
     @PostMapping
-    public ResponseEntity<AccountResponseDto> createAccount(@RequestBody AccountRequest request) {
+    public ResponseEntity<AccountResponseDto> createAccount(@Valid @RequestBody AccountRequest request) {
         AccountResponseDto response = accountService.createAccount(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
 
     // -------------------- GET ALL ACCOUNTS --------------------
     @GetMapping
@@ -41,22 +44,28 @@ public class AccountController {
     @PutMapping("/{accountNumber}")
     public ResponseEntity<AccountResponseDto> updateAccount(
             @PathVariable String accountNumber,
-            @RequestBody AccountRequest request) {
+           @Valid @RequestBody AccountRequest request) {
         return ResponseEntity.ok(accountService.updateAccount(accountNumber, request));
     }
 
     // -------------------- DELETE ACCOUNT --------------------
     @DeleteMapping("/{accountNumber}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable String accountNumber) {
+    public ResponseEntity<Map<String, String>> deleteAccount(@PathVariable String accountNumber) {
+
         accountService.deleteAccount(accountNumber);
-        return ResponseEntity.noContent().build();
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Account has been deleted successfully");
+
+        return ResponseEntity.ok(response);
     }
+
 
     // -------------------- DEPOSIT --------------------
     @PutMapping("/{accountNumber}/deposit")
     public ResponseEntity<TransactionResponseDto> deposit(
             @PathVariable String accountNumber,
-            @RequestBody DepositRequest request) {
+        @Valid @RequestBody DepositRequest request) {
         return ResponseEntity.ok(accountService.deposit(accountNumber, request));
     }
 
@@ -64,14 +73,14 @@ public class AccountController {
     @PutMapping("/{accountNumber}/withdraw")
     public ResponseEntity<TransactionResponseDto> withdraw(
             @PathVariable String accountNumber,
-            @RequestBody WithdrawRequest request) {
+           @Valid @RequestBody WithdrawRequest request) {
         return ResponseEntity.ok(accountService.withdraw(accountNumber, request));
     }
 
     // -------------------- TRANSFER --------------------
     @PostMapping("/transfer")
     public ResponseEntity<TransactionResponseDto> transfer(
-            @RequestBody TransferRequest request) {
+           @Valid @RequestBody TransferRequest request) {
         return ResponseEntity.ok(accountService.transfer(request));
     }
 

@@ -147,9 +147,20 @@ public class AccountService {
     }
 
     public List<TransactionResponseDto> getTransactions(String accountNumber) {
-        return transactionRepository.findByFromAccountOrToAccount(accountNumber, accountNumber)
-                .stream().map(this::mapToDTO).collect(Collectors.toList());
+
+        // Check if account exists
+        accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found: " + accountNumber));
+
+        // Fetch transactions
+        List<Transaction> transactions =
+                transactionRepository.findByFromAccountOrToAccount(accountNumber, accountNumber);
+
+        return transactions.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
+
 
     private String generateAccountNumber(String holderName) {
         String initials = holderName.length() >= 3 ? holderName.substring(0, 3).toUpperCase() : holderName.toUpperCase();
