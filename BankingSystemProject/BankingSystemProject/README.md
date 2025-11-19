@@ -55,15 +55,36 @@ mvn spring-boot:run
 
 API Endpoints
 Operation	HTTP Method	Endpoint
-Create Account	POST	/api/accounts
-Get Account	GET	/api/accounts/{accountNumber}
-Deposit	PUT	/api/accounts/{accountNumber}/deposit
-Withdraw	PUT	/api/accounts/{accountNumber}/withdraw
-Transfer	POST	/api/accounts/transfer
-Transactions	GET	/api/acc
+Account Endpoint
+
+| Operation        | HTTP Method | Endpoint                        | Request Body Example                                                      | Response Example                                                                    |
+| ---------------- | ----------- | ------------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Create Account   | POST        | `/api/accounts`                 | `json { "name": "John Doe", "balance": 5000, "accountType": "SAVINGS" } ` | `json { "accountNumber": "ACC123", "name": "John Doe", "balance": 5000 } `          |
+| Get Account      | GET         | `/api/accounts/{accountNumber}` | –                                                                         | `json { "accountNumber": "ACC123", "name": "John Doe", "balance": 5000 } `          |
+| Update Account   | PUT         | `/api/accounts/{accountNumber}` | `json { "name": "Jane Doe", "accountType": "CURRENT" } `                  | `json { "accountNumber": "ACC123", "name": "Jane Doe", "balance": 5000 } `          |
+| Delete Account   | DELETE      | `/api/accounts/{accountNumber}` | –                                                                         | `json { "message": "Account deleted successfully." } `                              |
+| Get All Accounts | GET         | `/api/accounts`                 | –                                                                         | `json [ { "accountNumber": "ACC123", "name": "John Doe", "balance": 5000 }, ... ] ` |
+
+
+Transaction Endpoint
+
+| Operation           | HTTP Method | Endpoint                                     | Request Body Example                                                       | Response Example                                                                                                     |
+| ------------------- | ----------- | -------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Deposit             | PUT         | `/api/accounts/{accountNumber}/deposit`      | `json { "amount": 1000 } `                                                 | `json { "transactionId": "TXN001", "accountNumber": "ACC123", "amount": 1000, "type": "DEPOSIT", "balance": 6000 } ` |
+| Withdraw            | PUT         | `/api/accounts/{accountNumber}/withdraw`     | `json { "amount": 500 } `                                                  | `json { "transactionId": "TXN002", "accountNumber": "ACC123", "amount": 500, "type": "WITHDRAW", "balance": 5500 } ` |
+| Transfer            | POST        | `/api/accounts/transfer`                     | `json { "fromAccount": "ACC123", "toAccount": "ACC456", "amount": 2000 } ` | `json { "transactionId": "TXN003", "fromAccount": "ACC123", "toAccount": "ACC456", "amount": 2000 } `                |
+| Transaction History | GET         | `/api/accounts/{accountNumber}/transactions` | –                                                                          | `json [ { "transactionId": "TXN001", "type": "DEPOSIT", "amount": 1000, "date": "2025-11-19" }, ... ] `              |
 
 ## API testing via Postman
 
-## Unit test coverage report (70%+ recommended).
-Unit tests for service and repository layers using JUnit 5 + Mockito.
+
+## Unit Test Coverage
 mvn test
+The project has been tested using JUnit 5 and Mockito. Below is the JaCoCo coverage report:
+
+- Overall coverage: 87%
+- Service layer: 79%
+- Bean layer: 85%
+- DTO layer: 96%
+- Exception and Controller layers: 100%
+
